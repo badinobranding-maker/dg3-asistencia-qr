@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -223,22 +224,86 @@ var QRGen=(function(){var EXP=new Uint8Array(512),LOG=new Uint8Array(256);(funct
 // LISTA DE ALUMNOS — DG3 FAD 2026
 // Cargada desde Supabase al inicio
 // ══════════════════════════════════
-const SB_URL = 'https://rdbviknfmlpiuldtheev.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkYnZpa25mbWxwaXVsZHRoZWV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MDUxMjEsImV4cCI6MjA5MTA4MTEyMX0.Vf471glBawTtYY3Bj6K95mlY8jiQSbQTB7YoEtHhZik';
+const ALUMNOS = [
+  {nombre:'ABDO GARCÍA, YALILI NAIR',legajo:'27549'},
+  {nombre:'ALESSANDRELLO, MAILEN AYERAY',legajo:'28622'},
+  {nombre:'ALFONSO, JULIA DEL LUJÁN',legajo:'29129'},
+  {nombre:'ALLUB ZICATO, LUCIANA BELEN',legajo:'29130'},
+  {nombre:'ÁLVAREZ GALLARDO, LUIS IGNACIO',legajo:'28812'},
+  {nombre:'ÁVILA, CELESTE ROCÍO',legajo:'28813'},
+  {nombre:'BOGLIOLI MERINO, VICTORIA JOSEFINA',legajo:'28634'},
+  {nombre:'CARRASCO ESPOSITO, MARIA PILAR',legajo:'29137'},
+  {nombre:'CARRIZO RUIZ, VALENTINA ABRIL',legajo:'28642'},
+  {nombre:'CASSONE, Teresa',legajo:'29138'},
+  {nombre:'CASTIÑEIRA DE DIOS, Martina',legajo:'29139'},
+  {nombre:'CASTRO, AGUSTINA EMILCE',legajo:''},
+  {nombre:'CHAFALÁ CASTILLO, CAMILA CELESTE',legajo:'28650'},
+  {nombre:'CHAPARRO, JOSEFINA',legajo:'29140'},
+  {nombre:'CIRAVEGNA CATANA, Giuliana',legajo:'29142'},
+  {nombre:'CORIA, Romina',legajo:'27656'},
+  {nombre:'CORNEJO LUCONI, Camila',legajo:'28658'},
+  {nombre:'CORTEZ, PABLO HERNÁN',legajo:'28388'},
+  {nombre:'CUTIPA, Ines',legajo:'28660'},
+  {nombre:'DEL CASTILLO LAVENIR, MARÍA MANUELA',legajo:'28661'},
+  {nombre:'DEL CORSO, Bianca',legajo:'28759'},
+  {nombre:'FARA, JULIETA',legajo:'28665'},
+  {nombre:'FARINA, AMALIA',legajo:'29151'},
+  {nombre:'FERNÁNDEZ CEJAS, RODRIGO VALENTÍN',legajo:'28476'},
+  {nombre:'FERNANDEZ SANCHEZ, ALDANA LUZ',legajo:'29152'},
+  {nombre:'FERREYRA, MARISOL',legajo:'28669'},
+  {nombre:'FULIGNA PERSIA, Lucia',legajo:'29157'},
+  {nombre:'GATICA ABRAHAM, Francisco',legajo:'28674'},
+  {nombre:'GOMEZ, CLAUDIO AGUSTÍN',legajo:'27572'},
+  {nombre:'GONZALEZ NAVARRO, Lucía',legajo:'28678'},
+  {nombre:'GOYENECHE ARIAS, DAIRA SOLANGE',legajo:'29164'},
+  {nombre:'HERMOSO, JUAN MARTÍN',legajo:'28680'},
+  {nombre:'HERNÁNDEZ, JOSEFINA',legajo:'28681'},
+  {nombre:'HONORATO, GONZALO ANDRES',legajo:'28401'},
+  {nombre:'JEREZ, Celeste',legajo:'29166'},
+  {nombre:'LUCERO, BRUNO FEDERICO',legajo:'28686'},
+  {nombre:'MALUF ARAYA, GASTÓN OCTAVIO',legajo:'28690'},
+  {nombre:'MASERA, LUCÍA',legajo:'28444'},
+  {nombre:'MERA Y SIERRA, VICTORIA SOFIA',legajo:'29174'},
+  {nombre:'MERINO DE VITA, MARTINA',legajo:'29175'},
+  {nombre:'MESSENET BARBIER, JULIANA DOMINIQUE',legajo:'28695'},
+  {nombre:'MICHELONI, Florencia',legajo:'29176'},
+  {nombre:'MILITELLO, Micaela',legajo:'28432'},
+  {nombre:'MOLINA, SANTIAGO',legajo:'29180'},
+  {nombre:'MONTENEGRO, MARTINA',legajo:'28700'},
+  {nombre:'NASER, MARIA BELEN',legajo:'29181'},
+  {nombre:'NAVAS SAPOLLNIK, Azul',legajo:'29182'},
+  {nombre:'OGARA, AUGUSTO MANUEL',legajo:'29183'},
+  {nombre:'OLIVARES ARCOS, CAMILA LUZ',legajo:'28707'},
+  {nombre:'ORTIZ, Agustina',legajo:'28709'},
+  {nombre:'PALOMBA MONSALVO, CARLA',legajo:'28445'},
+  {nombre:'PEGORIN GODOY, AGUSTINA LARA',legajo:'27712'},
+  {nombre:'PELAYES, DÉBORA ALEJANDRA',legajo:'29189'},
+  {nombre:'PERALTA SOSA, MAYRA AYELEN',legajo:'28766'},
+  {nombre:'PETTENARI ROBAZZA, FABRIZIO RAUL',legajo:'29190'},
+  {nombre:'PIATTELLI CARLUCCI, CATALINA',legajo:'29191'},
+  {nombre:'REDONDO, VALERIA SOFÍA',legajo:'28719'},
+  {nombre:'REY MACIAS, Carolina',legajo:'28720'},
+  {nombre:'RODRIGUEZ JARQUE, ENEAS NICOLÁS',legajo:'28724'},
+  {nombre:'ROJAS, MILENA ARIADNA',legajo:'27389'},
+  {nombre:'ROJO CANEDO, Paulo',legajo:'29200'},
+  {nombre:'ROWLAND, Mai',legajo:'28728'},
+  {nombre:'SAENZ, Olivia',legajo:'28731'},
+  {nombre:'SCANIO, Zoe',legajo:'28734'},
+  {nombre:'SCHMIDT ROCHA, LUCIA',legajo:'28735'},
+  {nombre:'SEJANOVICH, OLIVIA',legajo:'28737'},
+  {nombre:'SORBELLO, ANDREA',legajo:'29204'},
+  {nombre:'SUVIA CORDOVA, GIMENA FERNANDA',legajo:'28740'},
+  {nombre:'TEJADA MERCADO, Mauro',legajo:'28741'},
+  {nombre:'TORRES, Manuel',legajo:'28745'},
+  {nombre:'TUOSTO, CARLA',legajo:'28747'},
+  {nombre:'VALDEZ BASTÍAS, Lucia',legajo:'29206'},
+  {nombre:'VALENTI, SOFÍA AGUSTINA',legajo:'29207'},
+  {nombre:'VAUTIER, LEANDRO',legajo:'26918'},
+  {nombre:'VÁZQUEZ de NOVOA MARZIANI, JOSEFINA',legajo:'29383'},
+  {nombre:'VON KATONA, ALEJANDRINA',legajo:'28756'}
+];
 
-let ALUMNOS = []; // se carga de Supabase
-
-async function cargarAlumnos() {
-  try {
-    const res = await fetch(SB_URL + '/rest/v1/alumnos?select=nombre,legajo&activo=eq.true&order=nombre', {
-      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
-    });
-    const data = await res.json();
-    ALUMNOS = (data || []).map(a => ({ nombre: a.nombre || '', legajo: a.legajo || '' }));
-  } catch(e) {
-    // Fallback con datos vacíos
-    ALUMNOS = [];
-  }
+function cargarAlumnos() {
   document.getElementById('s-alumnos').textContent = ALUMNOS.length;
   renderClases();
 }
@@ -591,3 +656,4 @@ if (document.getElementById('checkin-page').style.display !== 'block') {
 </script>
 </body>
 </html>
+
