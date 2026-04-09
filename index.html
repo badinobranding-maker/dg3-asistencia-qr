@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -220,116 +219,163 @@ var QRGen=(function(){var EXP=new Uint8Array(512),LOG=new Uint8Array(256);(funct
 </script>
 
 <script>
-// ══════════════════════════════════
-// LISTA DE ALUMNOS — DG3 FAD 2026
-// Cargada desde Supabase al inicio
-// ══════════════════════════════════
-const SB_URL = 'https://rdbviknfmlpiuldtheev.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkYnZpa25mbWxwaXVsZHRoZWV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MDUxMjEsImV4cCI6MjA5MTA4MTEyMX0.Vf471glBawTtYY3Bj6K95mlY8jiQSbQTB7YoEtHhZik';
+const ALUMNOS = [
+  {nombre:'ABDO GARCÍA, YALILI NAIR',legajo:'27549'},
+  {nombre:'ALESSANDRELLO, MAILEN AYERAY',legajo:'28622'},
+  {nombre:'ALFONSO, JULIA DEL LUJÁN',legajo:'29129'},
+  {nombre:'ALLUB ZICATO, LUCIANA BELEN',legajo:'29130'},
+  {nombre:'ÁLVAREZ GALLARDO, LUIS IGNACIO',legajo:'28812'},
+  {nombre:'ÁVILA, CELESTE ROCÍO',legajo:'28813'},
+  {nombre:'BOGLIOLI MERINO, VICTORIA JOSEFINA',legajo:'28634'},
+  {nombre:'BREITMAN, VALENTINA',legajo:'29109'},
+  {nombre:'CARRASCO ESPOSITO, MARIA PILAR',legajo:'29137'},
+  {nombre:'CARRIZO RUIZ, VALENTINA ABRIL',legajo:'28642'},
+  {nombre:'CASSONE, TERESA',legajo:'29138'},
+  {nombre:'CASTIÑEIRA DE DIOS, MARTINA',legajo:'29139'},
+  {nombre:'CASTRO, AGUSTINA EMILCE',legajo:'28646'},
+  {nombre:'CASTRO, LUCAS OSCAR',legajo:'28647'},
+  {nombre:'CASTRO, MARTINIANO',legajo:'28648'},
+  {nombre:'CHAFALÁ CASTILLO, CAMILA CELESTE',legajo:'28650'},
+  {nombre:'CHAPARRO, JOSEFINA',legajo:'29140'},
+  {nombre:'CIRAVEGNA CATANA, GIULIANA',legajo:'29142'},
+  {nombre:'CORIA, ROMINA',legajo:'27656'},
+  {nombre:'CORNEJO LUCONI, CAMILA',legajo:'28658'},
+  {nombre:'CORTEZ, PABLO HERNÁN',legajo:'28388'},
+  {nombre:'CUTIPA, INES',legajo:'28660'},
+  {nombre:'DEL CASTILLO LAVENIR, MARÍA MANUELA',legajo:'28661'},
+  {nombre:'DEL CORSO, BIANCA',legajo:'28759'},
+  {nombre:'DÍAZ VALENTÍN, CANDELA',legajo:'29149'},
+  {nombre:'FARA, JULIETA',legajo:'28665'},
+  {nombre:'FARINA, AMALIA',legajo:'29151'},
+  {nombre:'FERNÁNDEZ CEJAS, RODRIGO VALENTÍN',legajo:'28476'},
+  {nombre:'FERNANDEZ SANCHEZ, ALDANA LUZ',legajo:'29152'},
+  {nombre:'FERREYRA, MARISOL',legajo:'28669'},
+  {nombre:'FULIGNA PERSIA, LUCIA',legajo:'29157'},
+  {nombre:'GATICA ABRAHAM, FRANCISCO',legajo:'28674'},
+  {nombre:'GOMEZ, CLAUDIO AGUSTÍN',legajo:'27572'},
+  {nombre:'GONZALEZ NAVARRO, LUCÍA',legajo:'28678'},
+  {nombre:'GOYENECHE ARIAS, DAIRA SOLANGE',legajo:'29164'},
+  {nombre:'HERMOSO, JUAN MARTÍN',legajo:'28680'},
+  {nombre:'HERNÁNDEZ, JOSEFINA',legajo:'28681'},
+  {nombre:'HONORATO, GONZALO ANDRES',legajo:'28401'},
+  {nombre:'JEREZ, CELESTE',legajo:'29166'},
+  {nombre:'LUCERO, BRUNO FEDERICO',legajo:'28686'},
+  {nombre:'MALUF ARAYA, GASTÓN OCTAVIO',legajo:'28690'},
+  {nombre:'MASERA, LUCÍA',legajo:'28444'},
+  {nombre:'MERA Y SIERRA, VICTORIA SOFIA',legajo:'29174'},
+  {nombre:'MERINO DE VITA, MARTINA',legajo:'29175'},
+  {nombre:'MESSENET BARBIER, JULIANA DOMINIQUE',legajo:'28695'},
+  {nombre:'MICHELONI, FLORENCIA',legajo:'29176'},
+  {nombre:'MILITELLO, MICAELA',legajo:'28432'},
+  {nombre:'MOLINA, SANTIAGO',legajo:'29180'},
+  {nombre:'MONTENEGRO, MARTINA',legajo:'28700'},
+  {nombre:'NASER, MARIA BELEN',legajo:'29181'},
+  {nombre:'NAVAS SAPOLLNIK, AZUL',legajo:'29182'},
+  {nombre:'OGARA, AUGUSTO MANUEL',legajo:'29183'},
+  {nombre:'OLIVARES ARCOS, CAMILA LUZ',legajo:'28707'},
+  {nombre:'ORTIZ, AGUSTINA',legajo:'28709'},
+  {nombre:'PALOMBA MONSALVO, CARLA',legajo:'28445'},
+  {nombre:'PEGORIN GODOY, AGUSTINA LARA',legajo:'27712'},
+  {nombre:'PELAYES, DÉBORA ALEJANDRA',legajo:'29189'},
+  {nombre:'PERALTA SOSA, MAYRA AYELEN',legajo:'28766'},
+  {nombre:'PETTENARI ROBAZZA, FABRIZIO RAUL',legajo:'29190'},
+  {nombre:'PIATTELLI CARLUCCI, CATALINA',legajo:'29191'},
+  {nombre:'PUGA RODRIGUEZ, GUSTAVO',legajo:'28534'},
+  {nombre:'QUIJANO GOMEZ, MARÍA VICTORIA',legajo:'29194'},
+  {nombre:'REDONDO, VALERIA SOFÍA',legajo:'28719'},
+  {nombre:'REY MACIAS, CAROLINA',legajo:'28720'},
+  {nombre:'RODRIGUEZ JARQUE, ENEAS NICOLÁS',legajo:'28724'},
+  {nombre:'ROJAS, MILENA ARIADNA',legajo:'27389'},
+  {nombre:'ROJO CANEDO, PAULO',legajo:'29200'},
+  {nombre:'ROWLAND, MAI',legajo:'28728'},
+  {nombre:'SAENZ, OLIVIA',legajo:'28731'},
+  {nombre:'SCALIA, GIULIANA VALENTINA',legajo:'28733'},
+  {nombre:'SCANIO, ZOE',legajo:'28734'},
+  {nombre:'SCHMIDT ROCHA, LUCIA',legajo:'28735'},
+  {nombre:'SEJANOVICH, OLIVIA',legajo:'28737'},
+  {nombre:'SORBELLO, ANDREA',legajo:'29204'},
+  {nombre:'SUVIA CORDOVA, GIMENA FERNANDA',legajo:'28740'},
+  {nombre:'TEJADA MERCADO, MAURO',legajo:'28741'},
+  {nombre:'TORRES, MANUEL',legajo:'28745'},
+  {nombre:'TUOSTO, CARLA',legajo:'28747'},
+  {nombre:'VALDEZ BASTÍAS, LUCIA',legajo:'29206'},
+  {nombre:'VALENTI, SOFÍA AGUSTINA',legajo:'29207'},
+  {nombre:'VAUTIER, LEANDRO',legajo:'26918'},
+  {nombre:'VÁZQUEZ DE NOVOA MARZIANI, JOSEFINA',legajo:'29383'},
+  {nombre:'VON KATONA, ALEJANDRINA',legajo:'28756'}
+];
 
-let ALUMNOS = []; // se carga de Supabase
+const CLASES_DATA = [
+  ['2026-03-27','Viernes','27 Mar 2026'],
+  ['2026-03-31','Martes','31 Mar 2026'],
+  ['2026-04-07','Martes','7 Abr 2026'],
+  ['2026-04-10','Viernes','10 Abr 2026'],
+  ['2026-04-14','Martes','14 Abr 2026'],
+  ['2026-04-17','Viernes','17 Abr 2026'],
+  ['2026-04-21','Martes','21 Abr 2026'],
+  ['2026-04-24','Viernes','24 Abr 2026'],
+  ['2026-04-28','Martes','28 Abr 2026'],
+  ['2026-05-05','Martes','5 May 2026'],
+  ['2026-05-08','Viernes','8 May 2026'],
+  ['2026-05-19','Martes','19 May 2026'],
+  ['2026-05-22','Viernes','22 May 2026'],
+  ['2026-05-26','Martes','26 May 2026'],
+  ['2026-05-29','Viernes','29 May 2026'],
+  ['2026-06-02','Martes','2 Jun 2026'],
+  ['2026-06-05','Viernes','5 Jun 2026'],
+  ['2026-06-09','Martes','9 Jun 2026'],
+  ['2026-06-12','Viernes','12 Jun 2026'],
+  ['2026-06-16','Martes','16 Jun 2026'],
+  ['2026-06-23','Martes','23 Jun 2026'],
+  ['2026-06-26','Viernes','26 Jun 2026'],
+  ['2026-06-30','Martes','30 Jun 2026'],
+  ['2026-07-03','Viernes','3 Jul 2026'],
+  ['2026-07-21','Martes','21 Jul 2026'],
+  ['2026-07-24','Viernes','24 Jul 2026'],
+  ['2026-07-28','Martes','28 Jul 2026'],
+  ['2026-07-31','Viernes','31 Jul 2026'],
+  ['2026-08-04','Martes','4 Ago 2026'],
+  ['2026-08-07','Viernes','7 Ago 2026'],
+  ['2026-08-11','Martes','11 Ago 2026'],
+  ['2026-08-14','Viernes','14 Ago 2026'],
+  ['2026-08-18','Martes','18 Ago 2026'],
+  ['2026-08-21','Viernes','21 Ago 2026'],
+  ['2026-08-25','Martes','25 Ago 2026'],
+  ['2026-08-28','Viernes','28 Ago 2026'],
+  ['2026-09-01','Martes','1 Sep 2026'],
+  ['2026-09-08','Martes','8 Sep 2026'],
+  ['2026-09-11','Viernes','11 Sep 2026'],
+  ['2026-09-15','Martes','15 Sep 2026'],
+  ['2026-09-18','Viernes','18 Sep 2026'],
+  ['2026-09-22','Martes','22 Sep 2026'],
+  ['2026-09-25','Viernes','25 Sep 2026'],
+  ['2026-09-29','Martes','29 Sep 2026'],
+  ['2026-10-02','Viernes','2 Oct 2026'],
+  ['2026-10-06','Martes','6 Oct 2026'],
+  ['2026-10-09','Viernes','9 Oct 2026'],
+  ['2026-10-13','Martes','13 Oct 2026'],
+  ['2026-10-16','Viernes','16 Oct 2026'],
+  ['2026-10-20','Martes','20 Oct 2026'],
+  ['2026-10-23','Viernes','23 Oct 2026'],
+  ['2026-10-27','Martes','27 Oct 2026'],
+  ['2026-10-30','Viernes','30 Oct 2026'],
+  ['2026-11-03','Martes','3 Nov 2026'],
+  ['2026-11-06','Viernes','6 Nov 2026'],
+  ['2026-11-10','Martes','10 Nov 2026'],
+  ['2026-11-13','Viernes','13 Nov 2026'],
+  ['2026-11-17','Martes','17 Nov 2026']
+];
 
-async function cargarAlumnos() {
-  try {
-    const res = await fetch(SB_URL + '/rest/v1/alumnos?select=nombre,legajo&activo=eq.true&order=nombre', {
-      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
-    });
-    const data = await res.json();
-    ALUMNOS = (data || []).map(a => ({ nombre: a.nombre || '', legajo: a.legajo || '' }));
-  } catch(e) {
-    // Fallback con datos vacíos
-    ALUMNOS = [];
-  }
+function cargarAlumnos() {
   document.getElementById('s-alumnos').textContent = ALUMNOS.length;
   renderClases();
 }
 
-// ══════════════════════════════════
-// CALENDARIO — Martes y Viernes 2026
-// Inicio: 7 abril · Fin: 20 noviembre
-// ══════════════════════════════════
-const FERIADOS = new Set([
-  '2026-04-07','2026-04-10', // Semana Santa
-  '2026-05-01', // Día del Trabajador
-  '2026-05-25', // Revolución de Mayo
-  '2026-06-19', // Belgrano
-  '2026-07-09', // Independencia
-  '2026-08-17', // San Martín
-  '2026-10-12', // Diversidad Cultural
-  '2026-11-20', // Soberanía Nacional
-]);
-const RECESO_INI = '2026-07-06', RECESO_FIN = '2026-07-17';
+const CLASES = CLASES_DATA.map(([fecha,dia,label]) => ({
+  id: 'c' + fecha.replace(/-/g,''),
+  fecha, dia, label
+}));
 
-function generarClases() {
-  // Calendario oficial FAD UNCUYO 2026
-  // Inicio 23 mar · Fin 19 nov · Receso 6-17 jul
-  const datos = [
-    ['2026-03-27','Viernes','27 Mar 2026'],
-    ['2026-03-31','Martes','31 Mar 2026'],
-    ['2026-04-07','Martes','7 Abr 2026'],
-    ['2026-04-10','Viernes','10 Abr 2026'],
-    ['2026-04-14','Martes','14 Abr 2026'],
-    ['2026-04-17','Viernes','17 Abr 2026'],
-    ['2026-04-21','Martes','21 Abr 2026'],
-    ['2026-04-24','Viernes','24 Abr 2026'],
-    ['2026-04-28','Martes','28 Abr 2026'],
-    ['2026-05-05','Martes','5 May 2026'],
-    ['2026-05-08','Viernes','8 May 2026'],
-    ['2026-05-19','Martes','19 May 2026'],
-    ['2026-05-22','Viernes','22 May 2026'],
-    ['2026-05-26','Martes','26 May 2026'],
-    ['2026-05-29','Viernes','29 May 2026'],
-    ['2026-06-02','Martes','2 Jun 2026'],
-    ['2026-06-05','Viernes','5 Jun 2026'],
-    ['2026-06-09','Martes','9 Jun 2026'],
-    ['2026-06-12','Viernes','12 Jun 2026'],
-    ['2026-06-16','Martes','16 Jun 2026'],
-    ['2026-06-23','Martes','23 Jun 2026'],
-    ['2026-06-26','Viernes','26 Jun 2026'],
-    ['2026-06-30','Martes','30 Jun 2026'],
-    ['2026-07-03','Viernes','3 Jul 2026'],
-    ['2026-07-21','Martes','21 Jul 2026'],
-    ['2026-07-24','Viernes','24 Jul 2026'],
-    ['2026-07-28','Martes','28 Jul 2026'],
-    ['2026-07-31','Viernes','31 Jul 2026'],
-    ['2026-08-04','Martes','4 Ago 2026'],
-    ['2026-08-07','Viernes','7 Ago 2026'],
-    ['2026-08-11','Martes','11 Ago 2026'],
-    ['2026-08-14','Viernes','14 Ago 2026'],
-    ['2026-08-18','Martes','18 Ago 2026'],
-    ['2026-08-21','Viernes','21 Ago 2026'],
-    ['2026-08-25','Martes','25 Ago 2026'],
-    ['2026-08-28','Viernes','28 Ago 2026'],
-    ['2026-09-01','Martes','1 Sep 2026'],
-    ['2026-09-08','Martes','8 Sep 2026'],
-    ['2026-09-11','Viernes','11 Sep 2026'],
-    ['2026-09-15','Martes','15 Sep 2026'],
-    ['2026-09-18','Viernes','18 Sep 2026'],
-    ['2026-09-22','Martes','22 Sep 2026'],
-    ['2026-09-25','Viernes','25 Sep 2026'],
-    ['2026-09-29','Martes','29 Sep 2026'],
-    ['2026-10-02','Viernes','2 Oct 2026'],
-    ['2026-10-06','Martes','6 Oct 2026'],
-    ['2026-10-09','Viernes','9 Oct 2026'],
-    ['2026-10-13','Martes','13 Oct 2026'],
-    ['2026-10-16','Viernes','16 Oct 2026'],
-    ['2026-10-20','Martes','20 Oct 2026'],
-    ['2026-10-23','Viernes','23 Oct 2026'],
-    ['2026-10-27','Martes','27 Oct 2026'],
-    ['2026-10-30','Viernes','30 Oct 2026'],
-    ['2026-11-03','Martes','3 Nov 2026'],
-    ['2026-11-06','Viernes','6 Nov 2026'],
-    ['2026-11-10','Martes','10 Nov 2026'],
-    ['2026-11-13','Viernes','13 Nov 2026'],
-    ['2026-11-17','Martes','17 Nov 2026'],
-  ];
-  return datos.map(([fecha,dia,label]) => ({
-    id: 'c' + fecha.replace(/-/g,''),
-    fecha, dia, label
-  }));
-}
-
-const CLASES = generarClases();
 const HOY = new Date().toISOString().slice(0,10);
 let clasesAbiertas = {};
 
