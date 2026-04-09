@@ -412,7 +412,8 @@ function renderClases() {
 
   if (futuras.length) {
     html += '<div class="sec">Próximas</div>';
-    futuras.filter(c => !hayHoy.find(h => h.id === c.id)).forEach(c => { html += renderClaseCard(c, 'futura'); });
+    const prox = hayHoy.length ? null : CLASES.find(c => c.fecha >= HOY);
+    futuras.filter(c => !hayHoy.find(h => h.id === c.id) && (!prox || c.id !== prox.id)).forEach(c => { html += renderClaseCard(c, 'futura'); });
   }
 
   if (pasadas.length) {
