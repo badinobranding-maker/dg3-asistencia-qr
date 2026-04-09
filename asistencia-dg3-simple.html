@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#1a1a2e">
+<title>DG3 · Asistencia</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f8f9fa;--bg2:#fff;--text:#1a1a2e;--text2:#6b7280;--text3:#9ca3af;
+  --border:#e5e7eb;--primary:#1a1a2e;--accent:#e74c3c;
+  --ok:#16a34a;--warn:#d97706;--bad:#dc2626;
+  --safe:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:15px}
+body{overscroll-behavior:none}
+#app{display:flex;flex-direction:column;height:100dvh}
+#view{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#view::-webkit-scrollbar{display:none}
+.topbar{background:var(--primary);color:#fff;padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.topbar-title{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.topbar-sub{font-size:11px;opacity:.7;margin-top:2px}
+.topbar-right{font-size:12px;font-weight:600;background:rgba(255,255,255,.15);padding:5px 10px;border-radius:20px;white-space:nowrap}
+#tabbar{background:var(--bg2);border-top:1px solid var(--border);display:flex;height:calc(56px + var(--safe));padding-bottom:var(--safe)}
+.tabi{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;padding:6px 2px}
+.tabi.on{color:var(--primary)}
+.tabi svg{width:22px;height:22px;stroke-width:1.8}
+.panel{display:none;min-height:100%;padding-bottom:calc(60px + var(--safe))}
+.panel.on{display:block}
+.sec{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;padding:16px 16px 8px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin:0 14px 10px;overflow:hidden}
+.arow{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--border)}
+.arow:last-child{border-bottom:none}
+.anum{width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ainfo{flex:1;min-width:0}
+.aname{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.alegajo{font-size:11px;color:var(--text3);margin-top:1px}
+.abadge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;flex-shrink:0}
+.abadge.ok{background:#dcfce7;color:#15803d}
+.abadge.pend{background:#f1f5f9;color:#64748b}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 14px}
+.stat-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center}
+.stat-num{font-size:24px;font-weight:800;color:var(--text)}
+.stat-lbl{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+.stat-num.ok{color:var(--ok)}
+.clase-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin:0 14px 10px;overflow:hidden}
+.clase-head{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:10px}
+.clase-head:active{background:#f8f9fa}
+.clase-fecha{font-size:16px;font-weight:700}
+.clase-dia-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.cbadge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.cbadge.hoy{background:var(--primary);color:#fff}
+.cbadge.pasada{background:#f1f5f9;color:#64748b}
+.cbadge.futura{background:#e0f2fe;color:#0369a1}
+.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+.qr-frame{background:#fff;border-radius:16px;padding:16px;border:1px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+.qr-frame svg{display:block;width:200px;height:200px}
+.qr-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border-radius:12px;border:none;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;width:100%}
+.qr-btn-primary{background:var(--primary);color:#fff}
+.qr-btn-secondary{background:#f1f5f9;color:var(--text);border:1px solid var(--border)}
+.qr-btn:active{opacity:.8}
+.live-box{width:100%;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:12px 14px}
+.live-title{font-size:11px;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#16a34a;animation:blink 1.4s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.live-item{font-size:13px;color:var(--text);padding:5px 0;border-bottom:1px solid #dcfce7;display:flex;justify-content:space-between}
+.live-item:last-child{border-bottom:none}
+.prog-bar{height:5px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;background:var(--ok);border-radius:99px;transition:width .3s}
+.search-wrap{padding:10px 14px}
+.search-inp{width:100%;padding:10px 14px 10px 36px;background:var(--bg2);border:1px solid var(--border);border-radius:99px;font-size:14px;font-family:inherit;color:var(--text);outline:none}
+.search-inp:focus{border-color:var(--primary)}
+.search-wrap-inner{position:relative}
+.search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3)}
+#checkin-page{position:fixed;inset:0;background:var(--bg);z-index:999;display:none;overflow-y:auto;padding:0}
+.ci-wrap{max-width:420px;margin:0 auto;padding:32px 20px}
+.ci-logo{width:64px;height:64px;background:var(--primary);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px}
+.ci-title{font-size:22px;font-weight:800;text-align:center;margin-bottom:6px}
+.ci-sub{font-size:13px;color:var(--text2);text-align:center;margin-bottom:28px;line-height:1.6}
+.ci-field{width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:12px;font-size:16px;font-family:inherit;color:var(--text);outline:none;background:var(--bg2);margin-bottom:10px;transition:border-color .15s}
+.ci-field:focus{border-color:var(--primary)}
+.ci-btn-main{width:100%;padding:15px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:4px}
+.ci-btn-main:active{opacity:.85}
+.ci-msg{text-align:center;font-size:15px;margin-top:16px;padding:16px;border-radius:12px;display:none;line-height:1.5}
+.ci-msg.ok{background:#dcfce7;color:#15803d}
+.ci-msg.err{background:#fee2e2;color:#991b1b}
+#toast{position:fixed;bottom:calc(70px + var(--safe));left:50%;transform:translateX(-50%) translateY(12px);background:var(--primary);color:#fff;font-size:13px;font-weight:600;padding:10px 18px;border-radius:99px;white-space:nowrap;z-index:9999;opacity:0;transition:all .2s;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.spin{display:inline-block;width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.ifield{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;color:var(--text);outline:none;background:var(--bg)}
+.ifield:focus{border-color:var(--primary)}
+.btn-save{width:100%;padding:11px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:10px}
+</style>
+</head>
+<body>
+
+<!-- CHECKIN (alumnos) -->
+<div id="checkin-page">
+  <div class="ci-wrap">
+    <div class="ci-logo">📋</div>
+    <div class="ci-title" id="ci-titulo">DG3 · Asistencia</div>
+    <div class="ci-sub" id="ci-sub">Diseño Gráfico 3 · FAD UNCUYO<br>Completá tus datos para registrar presencia</div>
+    <input class="ci-field" type="text" id="ci-nombre" placeholder="Apellido y nombre completo..." autocomplete="name" autocorrect="off" autocapitalize="words">
+    <input class="ci-field" type="text" id="ci-legajo" placeholder="Número de legajo..." inputmode="numeric" autocomplete="off">
+    <button class="ci-btn-main" onclick="registrarAsistencia()" id="ci-btn">✓ Registrar presencia</button>
+    <div class="ci-msg" id="ci-msg"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<div id="app">
+<div id="view">
+
+  <!-- PANEL CLASES -->
+  <div id="panel-clases" class="panel on">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">DG3 · FAD 2026</div>
+        <div class="topbar-sub">Diseño Gráfico 3 · UNCUYO</div>
+      </div>
+      <div class="topbar-right" id="top-hoy"></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num" id="s-alumnos">0</div><div class="stat-lbl">Alumnos</div></div>
+      <div class="stat-box"><div class="stat-num ok" id="s-hoy">0</div><div class="stat-lbl">Hoy</div></div>
+      <div class="stat-box"><div class="stat-num" id="s-clases">0</div><div class="stat-lbl">Clases</div></div>
+    </div>
+    <div id="lista-clases"></div>
+  </div>
+
+  <!-- PANEL ALUMNOS -->
+  <div id="panel-alumnos" class="panel">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Alumnos</div>
+        <div class="topbar-sub" id="al-sub">DG3 · 2026</div>
+      </div>
+      <div class="topbar-right" id="al-count"></div>
+    </div>
+    <div class="search-wrap">
+      <div class="search-wrap-inner">
+        <svg class="search-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-inp" type="text" placeholder="Buscar por nombre o legajo..." oninput="buscarAlumno(this.value)">
+      </div>
+    </div>
+    <div id="lista-alumnos"></div>
+  </div>
+
+  <!-- PANEL CONFIG -->
+  <div id="panel-config" class="panel">
+    <div class="topbar">
+      <div><div class="topbar-title">Configuración</div><div class="topbar-sub">Links y datos</div></div>
+    </div>
+    <div class="sec">Google Sheet (registro automático)</div>
+    <div class="card" style="padding:14px 16px">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:8px">URL del script de Google Apps que recibe los registros</div>
+      <input type="url" id="cfg-sheet" class="ifield" placeholder="https://script.google.com/macros/s/...">
+      <button class="btn-save" onclick="guardarCfg()">Guardar</button>
+    </div>
+    <div class="sec">Drive / Planilla</div>
+    <div class="card" style="padding:14px 16px">
+      <input type="url" id="cfg-drive" class="ifield" placeholder="https://docs.google.com/spreadsheets/...">
+      <button class="btn-save" style="background:#0f9d58" onclick="abrirDrive()">Abrir planilla en Drive</button>
+    </div>
+    <div class="sec">Exportar</div>
+    <div class="card" style="padding:14px 16px">
+      <button class="btn-save" style="background:#1a73e8" onclick="exportarCSV()">↓ Descargar CSV de asistencias</button>
+      <button class="btn-save" style="background:#dc2626;margin-top:8px" onclick="borrarTodo()">🗑 Borrar todos los registros locales</button>
+    </div>
+    <div class="sec">Script de Google Apps Script</div>
+    <div class="card" style="padding:14px 16px">
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:10px">Creá un nuevo script en <b style="color:var(--text)">script.google.com</b>, pegá este código, guardá y publicá como Web App (acceso: Cualquiera):</div>
+      <div style="background:#1a1a2e;color:#a8ff78;font-family:monospace;font-size:11px;padding:12px;border-radius:10px;line-height:1.6;overflow-x:auto;white-space:pre">function doGet(e){
+  var ss = SpreadsheetApp.openById('ID_DEL_SHEET');
+  var sh = ss.getActiveSheet();
+  sh.appendRow([
+    e.parameter.fecha,
+    e.parameter.clase,
+    e.parameter.nombre,
+    e.parameter.legajo,
+    e.parameter.hora,
+    new Date()
+  ]);
+  return ContentService
+    .createTextOutput('ok')
+    .setMimeType(ContentService.MimeType.TEXT);
+}</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:8px">Reemplazá <b>ID_DEL_SHEET</b> por el ID de tu planilla (está en la URL de Google Sheets).</div>
+    </div>
+    <div style="text-align:center;font-size:11px;color:var(--text3);padding:20px">DG3 · FAD UNCUYO · 2026</div>
+  </div>
+
+</div>
+
+<div id="tabbar">
+  <button class="tabi on" onclick="goTab('clases',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Clases
+  </button>
+  <button class="tabi" onclick="goTab('alumnos',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Alumnos
+  </button>
+  <button class="tabi" onclick="goTab('config',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Config
+  </button>
+</div>
+</div>
+
+<!-- QR GENERATOR -->
+<script>
+var QRGen=(function(){var EXP=new Uint8Array(512),LOG=new Uint8Array(256);(function(){var x=1;for(var i=0;i<255;i++){EXP[i]=x;LOG[x]=i;x<<=1;if(x>=256)x^=285;}for(var i=255;i<512;i++)EXP[i]=EXP[i-255];})();function mul(a,b){return a===0||b===0?0:EXP[LOG[a]+LOG[b]];}function pm(p,q){var r=new Uint8Array(p.length+q.length-1);for(var i=0;i<p.length;i++)for(var j=0;j<q.length;j++)r[i+j]^=mul(p[i],q[j]);return r;}function rs(data,deg){var g=new Uint8Array([1]);for(var i=0;i<deg;i++)g=pm(g,[1,EXP[i]]);var r=new Uint8Array(data);for(var i=0;i<data.length;i++){var c=r[i];if(c!==0)for(var j=1;j<=g.length-1;j++)r[i+j]^=mul(g[j],c);}return r.slice(data.length);}var CAP=[0,16,28,44,64,86,108,124,154,182,216,254,290,334,365,415,453,507,563,627,669];var ALN=[[],[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90]];var ECB=[null,[1,10,16],[1,16,28],[1,26,44],[2,18,32],[2,24,43],[4,16,27],[4,18,31],[2,22,38],[3,22,36],[4,26,43]];function mm(v){var s=v*4+17,m=[];for(var i=0;i<s;i++)m.push(new Uint8Array(s));return m;}function sf(m,r,c,v){if(r>=0&&r<m.length&&c>=0&&c<m.length)m[r][c]=v?0x81:0x80;}function gM(m,r,c){return m[r][c]&1;}function iF(m,r,c){return !!(m[r][c]&0x80);}function fn(m,r,c){for(var i=-1;i<=7;i++)for(var j=-1;j<=7;j++){var v=i>=0&&i<=6&&j>=0&&j<=6&&(i===0||i===6||j===0||j===6||(i>=2&&i<=4&&j>=2&&j<=4));sf(m,r+i,c+j,v);}}function al(m,v){var p=ALN[v];for(var i=0;i<p.length;i++)for(var j=0;j<p.length;j++){if((i===0&&j===0)||(i===0&&j===p.length-1)||(i===p.length-1&&j===0))continue;for(var dr=-2;dr<=2;dr++)for(var dc=-2;dc<=2;dc++)sf(m,p[i]+dr,p[j]+dc,Math.abs(dr)===2||Math.abs(dc)===2||dr===0&&dc===0);}}function ti(m){var s=m.length;for(var i=6;i<s-6;i++){sf(m,6,i,i%2===0);sf(m,i,6,i%2===0);}}function vi(m,v){if(v<7)return;var b=v,r=v;for(var i=0;i<6;i++){r=(r<<1)^(r>>5?0x1F25:0);b=(b<<1)|(r>>5);}b=(v<<12)|r;var s=m.length;for(var i=0;i<6;i++)for(var j=0;j<3;j++){sf(m,s-11+j,i,(b>>>(i*3+j))&1);sf(m,i,s-11+j,(b>>>(i*3+j))&1);}}function fi(m){var d=0x14,r=d;for(var i=0;i<10;i++)r=(r<<1)^((r>>9)*0x537);var b=((d<<10)|r)^0x5412;var s=m.length;var idx=[0,1,2,3,4,5,7,8,s-7,s-6,s-5,s-4,s-3,s-2,s-1];for(var i=0;i<8;i++){var v=(b>>(14-i))&1;sf(m,8,idx[i],v);sf(m,idx[14-i],8,v);}sf(m,s-8,8,1);}function enc(s){var b=[],pu=function(v,n){for(var i=n-1;i>=0;i--)b.push((v>>i)&1);};pu(4,4);pu(s.length,8);for(var i=0;i<s.length;i++)pu(s.charCodeAt(i),8);return b;}function il(bl){var r=[],mx=0;for(var i=0;i<bl.length;i++)mx=Math.max(mx,bl[i].length);for(var i=0;i<mx;i++)for(var j=0;j<bl.length;j++)if(i<bl[j].length)r.push(bl[j][i]);return r;}return{gen:function(text,cs){cs=cs||4;var bt=[];for(var i=0;i<text.length;i++)bt.push(text.charCodeAt(i));var v=1;for(v=1;v<=20;v++)if(CAP[v]>=bt.length)break;if(v>20)v=20;var eb=v<=10?ECB[v]:[4,26,43];var nb=eb[0],ec=eb[1],tot=eb[2],dat=tot-ec;var bi=enc(text),tB=dat*nb*8;while(bi.length<tB&&bi.length%8!==0)bi.push(0);bi.push(0,0,0,0);while(bi.length<tB)bi.push(0);var pad=[0xEC,0x11],pi=0;while(bi.length<tB){for(var i=0;i<8;i++)bi.push((pad[pi]>>(7-i))&1);pi^=1;}var cw=[];for(var i=0;i<bi.length;i+=8){var b=0;for(var j=0;j<8;j++)b=(b<<1)|bi[i+j];cw.push(b);}var db=[],ecb2=[];for(var i=0;i<nb;i++)db.push(cw.slice(i*dat,(i+1)*dat));for(var i=0;i<db.length;i++)ecb2.push(Array.from(rs(db[i],ec)));var fin=il(db).concat(il(ecb2));var m=mm(v),s=m.length;fn(m,0,0);fn(m,s-7,0);fn(m,0,s-7);for(var i=0;i<8;i++){sf(m,7,i,0);sf(m,i,7,0);sf(m,s-8,i,0);sf(m,s-8+i,0,0);sf(m,7,s-8+i,0);sf(m,i,s-8,0);}al(m,v);ti(m);vi(m,v);fi(m);sf(m,4*v+9,8,1);var aB=[];for(var i=0;i<fin.length;i++)for(var j=7;j>=0;j--)aB.push((fin[i]>>j)&1);var bi2=0,up=true;for(var col=s-1;col>=1;col-=2){if(col===6)col=5;for(var i=0;i<s;i++){var row=up?s-1-i:i;for(var dc=0;dc<2;dc++){var c=col-dc;if(!iF(m,row,c)&&bi2<aB.length)m[row][c]=aB[bi2++];}}up=!up;}for(var r=0;r<s;r++)for(var c=0;c<s;c++)if(!iF(m,r,c)&&(r+c)%2===0)m[r][c]^=1;var q=4,tot2=(s+q*2)*cs,svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+tot2+' '+tot2+'" width="'+tot2+'" height="'+tot2+'"><rect width="'+tot2+'" height="'+tot2+'" fill="white"/>';for(var r=0;r<s;r++)for(var c=0;c<s;c++)if(gM(m,r,c))svg+='<rect x="'+((c+q)*cs)+'" y="'+((r+q)*cs)+'" width="'+cs+'" height="'+cs+'" fill="black"/>';return svg+'</svg>';}};})();
+</script>
+
+<script>
+// ══════════════════════════════════
+// LISTA DE ALUMNOS — DG3 FAD 2026
+// Cargada desde Supabase al inicio
+// ══════════════════════════════════
+const SB_URL = 'https://rdbviknfmlpiuldtheev.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkYnZpa25mbWxwaXVsZHRoZWV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MDUxMjEsImV4cCI6MjA5MTA4MTEyMX0.Vf471glBawTtYY3Bj6K95mlY8jiQSbQTB7YoEtHhZik';
+
+let ALUMNOS = []; // se carga de Supabase
+
+async function cargarAlumnos() {
+  try {
+    const res = await fetch(SB_URL + '/rest/v1/alumnos?select=nombre,legajo&activo=eq.true&order=nombre', {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+    const data = await res.json();
+    ALUMNOS = (data || []).map(a => ({ nombre: a.nombre || '', legajo: a.legajo || '' }));
+  } catch(e) {
+    // Fallback con datos vacíos
+    ALUMNOS = [];
+  }
+  document.getElementById('s-alumnos').textContent = ALUMNOS.length;
+  renderClases();
+}
+
+// ══════════════════════════════════
+// CALENDARIO — Martes y Viernes 2026
+// Inicio: 7 abril · Fin: 20 noviembre
+// ══════════════════════════════════
+const FERIADOS = new Set([
+  '2026-04-07','2026-04-10', // Semana Santa
+  '2026-05-01', // Día del Trabajador
+  '2026-05-25', // Revolución de Mayo
+  '2026-06-19', // Belgrano
+  '2026-07-09', // Independencia
+  '2026-08-17', // San Martín
+  '2026-10-12', // Diversidad Cultural
+  '2026-11-20', // Soberanía Nacional
+]);
+const RECESO_INI = '2026-07-06', RECESO_FIN = '2026-07-17';
+
+function generarClases() {
+  const list = [];
+  const d = new Date('2026-04-07T12:00:00');
+  const fin = new Date('2026-11-21T12:00:00');
+  while (d < fin) {
+    const dow = d.getDay();
+    if (dow === 2 || dow === 5) {
+      const key = d.toISOString().slice(0,10);
+      const enReceso = key >= RECESO_INI && key <= RECESO_FIN;
+      if (!FERIADOS.has(key) && !enReceso) {
+        const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+        const [y,m,dy] = key.split('-');
+        list.push({
+          id: 'c' + key.replace(/-/g,''),
+          fecha: key,
+          dia: dow===2 ? 'Martes' : 'Viernes',
+          label: parseInt(dy) + ' ' + meses[parseInt(m)-1] + ' ' + y
+        });
+      }
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return list;
+}
+
+const CLASES = generarClases();
+const HOY = new Date().toISOString().slice(0,10);
+let clasesAbiertas = {};
+
+// ══════════════════════════════════
+// RENDER CLASES
+// ══════════════════════════════════
+function getReg() { return JSON.parse(localStorage.getItem('dg3_reg') || '[]'); }
+
+function renderClases() {
+  const reg = getReg();
+  const hoyReg = reg.filter(r => r.fecha === HOY);
+  document.getElementById('s-alumnos').textContent = ALUMNOS.length;
+  document.getElementById('s-hoy').textContent = hoyReg.length;
+  document.getElementById('s-clases').textContent = CLASES.length;
+  const hoyDate = new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('top-hoy').textContent = hoyDate.charAt(0).toUpperCase() + hoyDate.slice(1);
+
+  const pasadas = CLASES.filter(c => c.fecha < HOY).reverse().slice(0, 6);
+  const hayHoy = CLASES.filter(c => c.fecha === HOY);
+  const futuras = CLASES.filter(c => c.fecha > HOY).slice(0, 10);
+
+  let html = '';
+
+  if (hayHoy.length) {
+    html += '<div class="sec">Hoy · ' + hayHoy[0].dia + '</div>';
+    hayHoy.forEach(c => { html += renderClaseCard(c, 'hoy'); });
+  } else {
+    const prox = CLASES.find(c => c.fecha >= HOY);
+    if (prox) {
+      html += '<div class="sec">Próxima clase</div>';
+      html += renderClaseCard(prox, 'futura');
+    }
+  }
+
+  if (futuras.length) {
+    html += '<div class="sec">Próximas</div>';
+    futuras.filter(c => !hayHoy.find(h => h.id === c.id)).forEach(c => { html += renderClaseCard(c, 'futura'); });
+  }
+
+  if (pasadas.length) {
+    html += '<div class="sec">Clases anteriores</div>';
+    pasadas.forEach(c => { html += renderClaseCard(c, 'pasada'); });
+  }
+
+  document.getElementById('lista-clases').innerHTML = html;
+}
+
+function renderClaseCard(c, tipo) {
+  const reg = getReg();
+  const presentes = reg.filter(r => r.fecha === c.fecha);
+  const pct = ALUMNOS.length > 0 ? Math.round(presentes.length / ALUMNOS.length * 100) : 0;
+  const isOpen = clasesAbiertas[c.id];
+  const badgeClass = tipo === 'hoy' ? 'hoy' : tipo === 'futura' ? 'futura' : 'pasada';
+  const badgeLabel = tipo === 'hoy' ? 'HOY' : tipo === 'futura' ? 'Próxima' : 'Pasada';
+
+  let body = '';
+  if (isOpen) {
+    // Presentes para esta clase
+    if (presentes.length) {
+      body += `<div style="margin-bottom:10px">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${presentes.length} de ${ALUMNOS.length} alumnos (${pct}%)</div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    }
+
+    if (tipo !== 'pasada' || tipo === 'hoy') {
+      // QR
+      const urlQR = location.origin + location.pathname + '?ci=' + btoa(JSON.stringify({
+        id: c.id, fecha: c.fecha, dia: c.dia, label: c.label
+      }));
+      body += `<div class="qr-wrap" style="margin-bottom:14px">
+        <div class="qr-frame">${QRGen.gen(urlQR, 4)}</div>
+        <div style="font-size:12px;color:var(--text2);text-align:center">${c.dia} ${c.label} · 15 a 19hs<br>Los alumnos escanean para registrar asistencia</div>
+        <div style="display:flex;gap:8px;width:100%">
+          <button class="qr-btn qr-btn-secondary" onclick="copiarURL('${urlQR}')" style="flex:1">🔗 Copiar</button>
+          <button class="qr-btn qr-btn-primary" onclick="compartirQR('${urlQR}','${c.dia} ${c.label}')" style="flex:1">📤 Compartir</button>
+        </div>
+      </div>`;
+    } else {
+      // Solo presentes para clases pasadas
+    }
+
+    if (presentes.length) {
+      body += `<div class="live-box">
+        <div class="live-title"><span class="live-dot"></span>Presentes (${presentes.length})</div>
+        ${presentes.map(r => `<div class="live-item"><span>${r.nombre}</span><span style="color:var(--text3);font-size:12px">${r.legajo} · ${r.hora}</span></div>`).join('')}
+      </div>`;
+    }
+
+    if (tipo === 'pasada' && !presentes.length) {
+      body += `<div style="font-size:13px;color:var(--text3);text-align:center;padding:8px 0">Sin registros para esta clase</div>`;
+    }
+  }
+
+  return `<div class="clase-card">
+    <div class="clase-head" onclick="toggleClase('${c.id}')">
+      <div style="flex:1;min-width:0">
+        <div class="clase-fecha">${c.dia} ${c.label}</div>
+        <div class="clase-dia-lbl">${tipo === 'pasada' ? presentes.length + '/' + ALUMNOS.length + ' presentes · 15 a 19hs' : '15:00 – 19:00 · Aula 1, edificio docencia'}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="cbadge ${badgeClass}">${badgeLabel}</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="transform:${isOpen?'rotate(180deg)':'none'};transition:.2s;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    ${isOpen ? `<div style="border-top:1px solid var(--border);padding:14px 16px">${body}</div>` : ''}
+  </div>`;
+}
+
+function toggleClase(id) {
+  clasesAbiertas[id] = !clasesAbiertas[id];
+  renderClases();
+}
+
+function copiarURL(url) {
+  navigator.clipboard?.writeText(url).then(() => toast('🔗 URL copiada')).catch(() => prompt('Copiá:', url));
+}
+
+function compartirQR(url, label) {
+  if (navigator.share) {
+    navigator.share({ title: 'DG3 · Asistencia ' + label, text: 'Escaneá o abrí para registrar tu asistencia', url }).catch(() => {});
+  } else {
+    copiarURL(url);
+  }
+}
+
+// ══════════════════════════════════
+// RENDER ALUMNOS
+// ══════════════════════════════════
+function renderAlumnos(filtro) {
+  filtro = (filtro || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const reg = getReg();
+  const clasasPasadas = CLASES.filter(c => c.fecha <= HOY).length;
+  const regHoy = new Set(reg.filter(r => r.fecha === HOY).map(r => r.legajo));
+
+  let lista = ALUMNOS;
+  if (filtro) {
+    lista = lista.filter(a =>
+      a.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(filtro) ||
+      a.legajo.includes(filtro)
+    );
+  }
+
+  document.getElementById('al-count').textContent = lista.length + '/' + ALUMNOS.length;
+  document.getElementById('al-sub').textContent = ALUMNOS.length + ' alumnos · DG3 2026';
+
+  if (!lista.length) {
+    document.getElementById('lista-alumnos').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3)">Sin resultados</div>';
+    return;
+  }
+
+  const html = '<div class="card">' + lista.map((a, i) => {
+    const asistidas = reg.filter(r => r.legajo === a.legajo).length;
+    const pct = clasasPasadas > 0 ? Math.round(asistidas / clasasPasadas * 100) : 0;
+    const hoyOk = regHoy.has(a.legajo);
+    return `<div class="arow">
+      <div class="anum">${ALUMNOS.indexOf(a) + 1}</div>
+      <div class="ainfo">
+        <div class="aname">${a.nombre}</div>
+        <div class="alegajo">Legajo: ${a.legajo} · ${asistidas}/${clasasPasadas} clases · ${pct}%</div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+      </div>
+      <span class="abadge ${hoyOk ? 'ok' : 'pend'}">${hoyOk ? '✓ Hoy' : pct + '%'}</span>
+    </div>`;
+  }).join('') + '</div>';
+
+  document.getElementById('lista-alumnos').innerHTML = html;
+}
+
+function buscarAlumno(v) { renderAlumnos(v); }
+
+// ══════════════════════════════════
+// CHECK-IN (alumno escanea QR)
+// ══════════════════════════════════
+function verificarCheckin() {
+  const params = new URLSearchParams(location.search);
+  const ci = params.get('ci');
+  if (!ci) return;
+  try {
+    const data = JSON.parse(atob(ci));
+    document.getElementById('ci-titulo').textContent = 'DG3 · ' + data.dia + ' ' + data.label;
+    document.getElementById('ci-sub').textContent = 'Diseño Gráfico 3 · FAD UNCUYO\n' + data.dia + ' ' + data.label + ' · 15 a 19hs';
+    document.getElementById('checkin-page').style.display = 'block';
+    document.getElementById('checkin-page').dataset.fecha = data.fecha;
+    document.getElementById('checkin-page').dataset.clase = data.dia + ' ' + data.label;
+    document.getElementById('checkin-page').dataset.cid = data.id;
+    document.getElementById('ci-nombre').focus();
+  } catch(e) {}
+}
+
+async function registrarAsistencia() {
+  const nombre = document.getElementById('ci-nombre').value.trim();
+  const legajo = document.getElementById('ci-legajo').value.trim();
+  const fecha = document.getElementById('checkin-page').dataset.fecha;
+  const clase = document.getElementById('checkin-page').dataset.clase;
+  const msg = document.getElementById('ci-msg');
+  const btn = document.getElementById('ci-btn');
+
+  msg.style.display = 'none';
+
+  if (!nombre) {
+    msg.textContent = 'Ingresá tu nombre completo.';
+    msg.className = 'ci-msg err'; msg.style.display = 'block'; return;
+  }
+  if (!legajo) {
+    msg.textContent = 'Ingresá tu número de legajo.';
+    msg.className = 'ci-msg err'; msg.style.display = 'block'; return;
+  }
+
+  // Verificar duplicado
+  const reg = getReg();
+  if (reg.find(r => r.fecha === fecha && r.legajo === legajo)) {
+    msg.innerHTML = '<b>✓ Ya registraste tu asistencia hoy</b><br>' + nombre;
+    msg.className = 'ci-msg ok'; msg.style.display = 'block'; return;
+  }
+
+  btn.innerHTML = '<span class="spin"></span>'; btn.disabled = true;
+
+  const hora = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+  const registro = { fecha, clase, nombre, legajo, hora, ts: new Date().toISOString() };
+
+  // Guardar local
+  reg.push(registro);
+  localStorage.setItem('dg3_reg', JSON.stringify(reg));
+
+  // Enviar a Google Sheet (si hay URL configurada)
+  const sUrl = localStorage.getItem('dg3_sheet_url');
+  if (sUrl) {
+    try {
+      const p = new URLSearchParams({ fecha, clase, nombre, legajo, hora });
+      await fetch(sUrl + '?' + p.toString(), { method: 'GET', mode: 'no-cors' });
+    } catch(e) {}
+  }
+
+  msg.innerHTML = `<b>✓ ¡Asistencia registrada!</b><br>${nombre}<br><span style="font-size:12px;opacity:.8">Legajo ${legajo} · ${clase} · ${hora}</span>`;
+  msg.className = 'ci-msg ok'; msg.style.display = 'block';
+  btn.style.display = 'none';
+  document.getElementById('ci-nombre').disabled = true;
+  document.getElementById('ci-legajo').disabled = true;
+}
+
+// ══════════════════════════════════
+// CONFIG / EXPORT
+// ══════════════════════════════════
+function guardarCfg() {
+  localStorage.setItem('dg3_sheet_url', document.getElementById('cfg-sheet').value.trim());
+  localStorage.setItem('dg3_drive_url', document.getElementById('cfg-drive').value.trim());
+  toast('✓ Guardado');
+}
+function abrirDrive() {
+  const u = localStorage.getItem('dg3_drive_url');
+  if (u) window.open(u, '_blank'); else toast('Primero guardá el link de Drive');
+}
+function exportarCSV() {
+  const reg = getReg();
+  if (!reg.length) { toast('Sin registros aún'); return; }
+  const rows = [['Fecha','Clase','Nombre','Legajo','Hora']].concat(
+    reg.map(r => [r.fecha, r.clase, r.nombre, r.legajo, r.hora])
+  );
+  const csv = rows.map(r => r.map(c => '"' + String(c||'').replace(/"/g,'""') + '"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'}));
+  a.download = 'DG3_Asistencia_' + HOY + '.csv';
+  a.click();
+  toast('✓ CSV descargado');
+}
+function borrarTodo() {
+  if (confirm('¿Borrar TODOS los registros locales? No se puede deshacer.')) {
+    localStorage.removeItem('dg3_reg');
+    toast('Registros borrados');
+    renderClases();
+  }
+}
+
+// ══════════════════════════════════
+// NAV + TOAST
+// ══════════════════════════════════
+function goTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tabi').forEach(t => t.classList.remove('on'));
+  document.getElementById('panel-' + id).classList.add('on');
+  btn.classList.add('on');
+  document.getElementById('view').scrollTo(0,0);
+  if (id === 'alumnos') renderAlumnos();
+  if (id === 'config') {
+    document.getElementById('cfg-sheet').value = localStorage.getItem('dg3_sheet_url') || '';
+    document.getElementById('cfg-drive').value = localStorage.getItem('dg3_drive_url') || '';
+  }
+}
+function toast(msg, dur=2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// ══════════════════════════════════
+// INIT
+// ══════════════════════════════════
+verificarCheckin();
+if (document.getElementById('checkin-page').style.display !== 'block') {
+  cargarAlumnos(); // carga alumnos desde Supabase y luego renderiza
+  setInterval(renderClases, 30000); // actualiza lista presentes cada 30s
+}
+</script>
+</body>
+</html>
