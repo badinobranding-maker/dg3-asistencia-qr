@@ -103,9 +103,9 @@ body{overscroll-behavior:none}
   <div class="ci-wrap">
     <div class="ci-logo">📋</div>
     <div class="ci-title" id="ci-titulo">DG3 · Asistencia</div>
-    <div class="ci-sub" id="ci-sub">Diseño Gráfico 3 · FAD UNCUYO<br>Completá tus datos para registrar presencia</div>
-    <input class="ci-field" type="text" id="ci-nombre" placeholder="Apellido y nombre completo..." autocomplete="name" autocorrect="off" autocapitalize="words">
+    <div class="ci-sub" id="ci-sub">Diseño Gráfico 3 · FAD UNCUYO<br>Ingresá tu número de legajo</div>
     <input class="ci-field" type="text" id="ci-legajo" placeholder="Número de legajo..." inputmode="numeric" autocomplete="off">
+    <input type="hidden" id="ci-nombre" value="">
     <button class="ci-btn-main" onclick="registrarAsistencia()" id="ci-btn">✓ Registrar presencia</button>
     <div class="ci-msg" id="ci-msg"></div>
   </div>
@@ -444,7 +444,8 @@ function renderClaseCard(c, tipo) {
 
     if (tipo !== 'pasada' || tipo === 'hoy') {
       // QR
-      const urlQR = location.origin + location.pathname + '?ci=' + btoa(JSON.stringify({
+      const baseUrl = location.origin + (location.pathname.endsWith('/') ? location.pathname : location.pathname.replace(/\/[^/]*$/, '/'));
+      const urlQR = baseUrl + '?ci=' + btoa(JSON.stringify({
         id: c.id, fecha: c.fecha, dia: c.dia, label: c.label
       }));
       body += `<div class="qr-wrap" style="margin-bottom:14px">
@@ -492,7 +493,20 @@ function toggleClase(id) {
 }
 
 function copiarURL(url) {
-  navigator.clipboard?.writeText(url).then(() => toast('🔗 URL copiada')).catch(() => prompt('Copiá:', url));
+  try {
+    navigator.clipboard.writeText(url).then(() => toast('🔗 URL copiada'));
+  } catch(e) {
+    // Fallback: crear elemento temporal
+    const el = document.createElement('textarea');
+    el.value = url;
+    el.style.position = 'fixed';
+    el.style.opacity = '0';
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    toast('🔗 URL copiada');
+  }
 }
 
 function compartirQR(url, label) {
@@ -577,10 +591,6 @@ async function registrarAsistencia() {
 
   msg.style.display = 'none';
 
-  if (!nombre) {
-    msg.textContent = 'Ingresá tu nombre completo.';
-    msg.className = 'ci-msg err'; msg.style.display = 'block'; return;
-  }
   if (!legajo) {
     msg.textContent = 'Ingresá tu número de legajo.';
     msg.className = 'ci-msg err'; msg.style.display = 'block'; return;
@@ -611,7 +621,13 @@ async function registrarAsistencia() {
     } catch(e) {}
   }
 
-  msg.innerHTML = `<b>✓ ¡Asistencia registrada!</b><br>${nombre}<br><span style="font-size:12px;opacity:.8">Legajo ${legajo} · ${clase} · ${hora}</span>`;
+  // Find nombre from ALUMNOS list by legajo
+  const alumnoEncontrado = typeof ALUMNOS !== 'undefined' ? ALUMNOS.find(a => a.legajo === legajo) : null;
+  const nombreFinal = alumnoEncontrado ? alumnoEncontrado.nombre : 'Legajo ' + legajo;
+  registro.nombre = nombreFinal;
+  reg[reg.length-1].nombre = nombreFinal;
+  localStorage.setItem('dg3_reg', JSON.stringify(reg));
+  msg.innerHTML = `<b>✓ ¡Asistencia registrada!</b><br>${nombreFinal}<br><span style="font-size:12px;opacity:.8">Legajo ${legajo} · ${clase} · ${hora}</span>`;
   msg.className = 'ci-msg ok'; msg.style.display = 'block';
   btn.style.display = 'none';
   document.getElementById('ci-nombre').disabled = true;
