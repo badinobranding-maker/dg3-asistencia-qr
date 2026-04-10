@@ -613,7 +613,7 @@ async function registrarAsistencia() {
   localStorage.setItem('dg3_reg', JSON.stringify(reg));
 
   // Enviar a Google Sheet (si hay URL configurada)
-  const sUrl = localStorage.getItem('dg3_sheet_url');
+  const sUrl = localStorage.getItem('dg3_sheet_url') || 'https://script.google.com/macros/s/AKfycbxpFuA9YD7dCS32InjbKc4DQlZaF1xbwV4lcNQZv42vhcins41iXtggeLoTko8fwZy1/exec';
   if (sUrl) {
     try {
       const p = new URLSearchParams({ fecha, clase, nombre, legajo, hora });
@@ -678,7 +678,7 @@ function goTab(id, btn) {
   document.getElementById('view').scrollTo(0,0);
   if (id === 'alumnos') renderAlumnos();
   if (id === 'config') {
-    document.getElementById('cfg-sheet').value = localStorage.getItem('dg3_sheet_url') || '';
+    document.getElementById('cfg-sheet').value = localStorage.getItem('dg3_sheet_url') || 'https://script.google.com/macros/s/AKfycbxpFuA9YD7dCS32InjbKc4DQlZaF1xbwV4lcNQZv42vhcins41iXtggeLoTko8fwZy1/exec';
     document.getElementById('cfg-drive').value = localStorage.getItem('dg3_drive_url') || '';
   }
 }
