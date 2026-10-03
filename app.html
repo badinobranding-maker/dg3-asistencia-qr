@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DG3 · Asistencia</title>
+<style>
+  html,body{margin:0;height:100%;background:#000}
+  iframe{position:fixed;inset:0;width:100%;height:100%;border:0;display:block}
+</style>
+</head>
+<body>
+<iframe id="app" title="DG3 · Asistencia" allow="autoplay; fullscreen; clipboard-write; camera; web-share"></iframe>
+<script>
+  // ★ URL de la web app (PRUEBA). Para la oficial, cambiala por la de la planilla oficial.
+  var GAS = "https://script.google.com/macros/s/AKfycby2SyqIm_LRYc-RyNCEP1TfFq2PVXxQUfEeE4ZAkSsYJAfImic6IauCuRqBoXusfswzIA/exec";
+  // Pasa los parámetros (?ficha=…&k=…, ?action=ruletayo&s=…) tal cual a la web app
+  document.getElementById("app").src = GAS + location.search;
+</script>
+</body>
+</html>
